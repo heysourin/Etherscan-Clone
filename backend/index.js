@@ -101,8 +101,8 @@ app.get("/address", async (req, res) => {
       });
 
     return res.status(200).json(response);
-  } catch (error) {
-    console.log(`Something went with address ${error}`);
+  } catch (e) {
+    console.log(`Something went wrong ${e}`);
     return res.status(400).json();
   }
 });

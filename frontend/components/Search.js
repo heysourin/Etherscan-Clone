@@ -6,8 +6,10 @@ import styles from "@/styles/Home.module.css";
 import { Bean, Beans } from "@web3uikit/icons";
 import { Illustration } from "@web3uikit/core";
 
+import SearchResults from "./searchResults.js"
+
 const Search = () => {
-  const [shoeResult, setShowResult] = useState(false);
+  const [showResult, setShowResult] = useState(false);
   const [result, setResult] = useState([]);
   const [searchInput, setSearchInput] = useState("");
 
@@ -17,12 +19,14 @@ const Search = () => {
 
   const handleSearch = async () => {
     document.querySelector("#inputField").value = "";
+
     const response = await axios.get("http://localhost:5001/address", {
       params: { address: searchInput }, //input-> changeHandler -> useState, searchInput -> backend handlesearch
     });
 
+    console.log("Response:", response);
     setResult(response.data.result);
-    shoeResult(true);
+    setShowResult(true);
   };
 
   return (
@@ -51,7 +55,6 @@ const Search = () => {
               <Bean fontSize="20px" />
             </span>
           </section>
-
         </section>
         <section className={styles.adSection}>
           <p className={styles.adtext}>Links</p>
@@ -61,6 +64,7 @@ const Search = () => {
           </section>
         </section>
       </section>
+      {showResult && <SearchResults result={{ result, searchInput }} />}
     </section>
   );
 };
