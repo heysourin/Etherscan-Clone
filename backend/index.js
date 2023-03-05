@@ -35,13 +35,23 @@ app.get("/getblockinfo", async (req, res) => {
     let blockNrOrParentHash = latestBlock.toJSON().block;
     let previousBlockInfo = [];
 
+    // A for loop is used to iterate over the previous 5 blocks.
     for (let i = 0; i < 5; i++) {
+      //The Moralis.EvmApi.block.getDateToBlock() method is called with an object that specifies the current date and the Ethereum mainnet chain ID. This method returns an object that contains information about the latest Ethereum block.
+
+      //This method returns an object that contains information about the specified block.
       const previousBlockNrs = await Moralis.EvmApi.block.getBlock({
         chain: "0x1",
         blockNumberOrHash: blockNrOrParentHash,
       });
 
+      //   The blockNrOrParentHash variable is set to the block number or parent hash of the latest block. The blockNrOrParentHash variable is updated to the parent hash of the current block so that the next iteration of the loop will retrieve information about the previous block.
       blockNrOrParentHash = previousBlockNrs.toJSON().parent_hash;
+
+      //If the loop is currently iterating over the latest block (i.e., i == 0), an object is pushed to the previousBlockInfo array that contains an array of transaction objects, each with properties for the transaction hash, time, from address, to address, and value.
+
+      //Each iteration it collects the data of previous block and saves it inside 'previousBlockInfo'.
+
       if (i == 0) {
         previousBlockInfo.push({
           transactions: previousBlockNrs.toJSON().transactions.map((i) => {
@@ -55,6 +65,8 @@ app.get("/getblockinfo", async (req, res) => {
           }),
         });
       }
+
+      //For all the iterations:
       previousBlockInfo.push({
         blockNumber: previousBlockNrs.toJSON().number,
         totalTransactions: previousBlockNrs.toJSON().transaction_count,
@@ -76,6 +88,7 @@ app.get("/getblockinfo", async (req, res) => {
   }
 });
 
+//
 app.get("/address", async (req, res) => {
   try {
     const { query } = req;
@@ -97,6 +110,8 @@ app.get("/address", async (req, res) => {
 //Finally, the server starts listening for API calls using the Moralis.start() method with the provided apiKey and logs a message to the console indicating that it is listening.
 Moralis.start({
   apiKey: MORALIS_API_KEY,
-}).then(port, () => {
-  console.log("Listening for API Calls");
+}).then(() => {
+  app.listen(port, () => {
+    console.log(`Listening for API Calls`);
+  });
 });
